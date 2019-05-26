@@ -7,5 +7,37 @@ output:
 editor_options:
   chunk_output_type: console
 ---
+```{r library}
 
-Welcome to my research website.
+library(readxl)
+library(janitor)
+library(tidyverse)
+library( matrittr)
+```
+
+
+```{r explore_xls}
+path='data/excel/'
+f=dir(path, '^t.*.xlsx')[10]
+
+for( f in dir('data/excel', '^t.*.xlsx')) {
+  dput(f)
+#
+
+  read_excel( paste0( path, f ))  %>%
+  select(1) %>%
+  filter( row_number()==1)  %>%
+  `[[`(1) %>% 
+  make_clean_names() %>%
+  { . } -> a
+
+#
+system(paste0( 'mv ', path, f,' ',path,  a, '.xlsx'))
+#
+}  
+
+read_excel('
+
+
+```
+
