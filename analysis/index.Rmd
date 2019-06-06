@@ -179,7 +179,7 @@ for( f in files) {
     ungroup() %>%
     mutate( group_age = paste0(group, '/',age ) ) %>%
     select( -group, -age ) %>%
-    mutate( proportion = color_bar("lightgreen")(proportion)) %>%
+#    mutate( proportion = color_bar("lightgreen")(proportion)) %>%
     spread( group_age, proportion ) %>%
     kable(escape = F, col.names = c('', "15-29", "30-44", "45-64","15-29", "30-44", "45-64") )  %>%
     add_header_above(c(" ", "South Sudanese" = 3, "Vietnamese" = 3)) %>% 
