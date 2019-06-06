@@ -1,42 +1,194 @@
 ---
-title: "Home"
-site: workflowr::wflow_site
+title: "Cherie"
 output:
-  workflowr::wflow_html:
-    toc: false
-editor_options:
-  chunk_output_type: console
+  workflowr::wflow_html
 ---
-```{r library}
 
+<style>
+img {
+max-width: none;
+
+    /* other options:
+    max-width: 200%;
+    max-width: 700px;
+    max-width: 9in;
+    max-width: 25cm;
+    etc
+    */
+    }
+</style>
+
+```{r,warning=FALSE,message=FALSE,echo=FALSE}
+
+# load libraries
+library(knitr)
+opts_chunk$set(warning=F,message=F,fig.width = 11,fig.height = 5,cache=F, echo=FALSE)
+library(tidyverse)
+
+#source( 'code/functions.R')
 library(readxl)
 library(janitor)
 library(tidyverse)
-library( matrittr)
+library( magrittr)
+library(knitr)
+library(kableExtra)
+library(formattable)
+
 ```
 
-
-```{r explore_xls}
+```{r explore_xls, results='asis'}
 path='data/excel/'
-f=dir(path, '^t.*.xlsx')[10]
 
-for( f in dir('data/excel', '^t.*.xlsx')) {
-  dput(f)
+
+## not run
+rename_excel <- function( path ) {
+
+  f=dir(path, '^t.*.xlsx')[10]
+  for( f in dir('data/excel', '^t.*.xlsx')) {
+    dput(f)
+  #
+    read_excel( paste0( path, f ))  %>%
+    select(1) %>%
+    filter( row_number()==1)  %>%
+    `[[`(1) %>% 
+    make_clean_names() %>%
+    { . } -> a
+  #
+  system(paste0( 'mv "', path, f,'" ',path,  a, '.xlsx'))
+  }  
+
+}
+
+
+age_levels = c("0-4 years", "5-9 years","10-14 years",
+               "15-19 years", "20-24 years", "25-29 years", "30-34 years", "35-39 years",
+               "40-44 years", "45-49 years",  "50-54 years", "55-59 years",
+               "60-64 years", "65-69 years", "70-74 years", "75-79 years", "80-84 years",
+               "85-89 years", "90-94 years", "95-99 years",  "100 years and over")
+
+age_levels_short = c("0-4", "5-9","10-14",
+                                 "15-19", "20-24", "25-29", "30-34", "35-39",
+                                 "40-44", "45-49",  "50-54", "55-59",
+                                 "60-64", "65-69", "70-74", "75-79", "80-84",
+                                 "85-89", "90-94", "95-99",  ">100")
+
+age_levels_combined = c("0-14", "0-14","0-14",
+                     "15-29", "15-29", "15-29", 
+                     "30-44", "30-44", "30-44", 
+                     "45-64",  "45-64", "45-64", "45-64", 
+                     ">65", ">65", ">65", ">65", ">65", ">65", ">65",  ">65")
+
+files = dir(path, '^age5p_age_in_five_year_groups_and.*.xlsx')
+
+
+
+f=files[12]
+
+for( f in files) {
 #
 
-  read_excel( paste0( path, f ))  %>%
-  select(1) %>%
-  filter( row_number()==1)  %>%
-  `[[`(1) %>% 
-  make_clean_names() %>%
-  { . } -> a
+  read_excel(paste0( path, f), skip=8) %>%
+    clean_names() %>% 
+    rename( age=2, category=3 ) %>%
+    fill(age, .direction='down') %>%
+    filter( category != 'Total') %>%
+    filter( category != 'Not applicable') %>%
+    select(-1, -starts_with('dinka'), -starts_with('nuer')) %>%
+    { . } -> df
 
 #
-system(paste0( 'mv ', path, f,' ',path,  a, '.xlsx'))
+  category_label = df[1,2]
+  cat( paste( "\n# ", category_label))
 #
-}  
 
-read_excel('
+  df %>%
+    filter( !is.na( total )) %>%
+    mutate( age = fct_relevel( age, age_levels) ) %>%
+    filter(as.numeric(age) >=4 & as.numeric(age)<=13 ) %>%
+    select(-total ) %>%
+    gather( group, population, -age, -category ) %>% 
+    filter(population >0) %>%
+    mutate( age = fct_drop(age )) %>%
+    { . } -> df_long
+
+
+#
+  # get the total for each category, put them
+  # on the end of the detail records
+  df_long %>%
+    group_by ( category, group ) %>%
+    summarise( population = sum( population ) ) %>%
+    mutate( age ='total') %>%
+    bind_rows( df_long ) %>% 
+    { . } -> df_long_total
+#
+#
+
+  df_long%>%
+    ggplot( aes( group, population, fill=category) ) +
+    geom_bar(position='fill', stat='identity') +
+    facet_wrap( ~age ) +
+    ggtitle( paste('By Group, ', category_label )) +
+    ylab( 'Proportion of population' ) %>% 
+    { . } -> graph
+
+  cat( paste( "\n## Graph by Ethnic Group  \n"))
+  print(graph )
+  cat('\n')
+
+  df_long%>%
+    mutate( age=dplyr::recode(age, !!! setNames( age_levels_short, age_levels))) %>%
+    ggplot( aes( age, population, fill=category) ) +
+    geom_bar(stat='identity') +
+    facet_wrap( ~group, scales='free' ) +
+    ggtitle( paste('By Age, ', category_label )) +
+    ylab( 'Number of people' ) %>% 
+    { . } -> graph
+
+  cat( paste( "\n## Graph by Age Group \n"))
+  print(graph )
+  cat('\n')
+
+  df_long %>%
+    distinct( age )  %>%
+    mutate( agen=as.numeric(age) )  
+
+  cat("\n## Table: % of total population for this ethnic group\n")
+
+  df_long %>%
+    group_by( category, group )  %>%
+    summarise( population = sum(population)) %>%
+    group_by( group ) %>%
+    mutate( proportion = round( population / sum( population ) * 100, 2 )) %>% 
+    select(-population ) %>%
+    spread( group, proportion ) %>%
+    kable() %>% 
+    kable_styling() %>%
+    print()
+  cat('\n')
+
+  cat("\n## Table: % of total for this ethnic and age group\n")
+
+  df_long %>%
+    mutate( age=dplyr::recode(age, !!! setNames( age_levels_combined, age_levels))) %>%
+    group_by( age, category, group )  %>%
+    summarise( population = sum(population)) %>%
+    group_by( group, age ) %>%
+    mutate( proportion = round( population / sum( population ) * 100, 2 )) %>% 
+    select(-population ) %>%
+    ungroup() %>%
+    mutate( group_age = paste0(group, '/',age ) ) %>%
+    select( -group, -age ) %>%
+    mutate( proportion = color_bar("lightgreen")(proportion)) %>%
+    spread( group_age, proportion ) %>%
+    kable(escape = F, col.names = c('', "15-29", "30-44", "45-64","15-29", "30-44", "45-64") )  %>%
+    add_header_above(c(" ", "South Sudanese" = 3, "Vietnamese" = 3)) %>% 
+    kable_styling() %>%
+    print()
+  cat('\n')
+
+
+}
 
 
 ```
