@@ -561,7 +561,7 @@ get_df(9) %>%
 
 #  Deciles
 
-```{r}
+```{r results='asis'}
 
 orig = paste0( "Decile ", 1:10 )
                       
