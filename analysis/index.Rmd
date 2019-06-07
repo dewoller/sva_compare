@@ -36,6 +36,40 @@ library(formattable)
 
 ```
 
+```{r functions}
+
+
+get_df = function( file ) {
+
+  read_excel(paste0( path, files[file]), skip=8) %>%
+    clean_names() %>% 
+    rename( age=2, category=3 ) %>%
+    fill(age, .direction='down') %>%
+    filter( category != 'Total') %>%
+    filter( category != 'Not applicable') %>%
+    filter( !startsWith( category, 'Not stated')) %>%
+    select(-1, -starts_with('dinka'), -starts_with('nuer')) %>%
+    { . } -> df
+
+  category = df[1,2]
+  #
+
+  df %>%
+    filter( !is.na( total )) %>%
+    mutate( age = fct_relevel( age, age_levels) ) %>%
+    filter(as.numeric(age) >=4 & as.numeric(age)<=13 ) %>%
+    select(-total ) %>%
+    gather( group, population, -age, -category ) %>% 
+    filter(population >0) %>%
+    mutate( age = fct_drop(age )) %>%
+    { . } -> df_long
+  list( df, df_long, category)
+}
+
+
+```
+
+
 ```{r explore_xls, results='asis'}
 path='data/excel/'
 
@@ -60,9 +94,8 @@ rename_excel <- function( path ) {
 }
 
 
-age_levels = c("0-4 years", "5-9 years","10-14 years",
-               "15-19 years", "20-24 years", "25-29 years", "30-34 years", "35-39 years",
-               "40-44 years", "45-49 years",  "50-54 years", "55-59 years",
+age_levels = c("0-4 years", "5-9 years","10-14 years", "15-19 years", "20-24 years", "25-29 years", 
+               "30-34 years", "35-39 years", "40-44 years", "45-49 years",  "50-54 years", "55-59 years",
                "60-64 years", "65-69 years", "70-74 years", "75-79 years", "80-84 years",
                "85-89 years", "90-94 years", "95-99 years",  "100 years and over")
 
@@ -72,124 +105,514 @@ age_levels_short = c("0-4", "5-9","10-14",
                                  "60-64", "65-69", "70-74", "75-79", "80-84",
                                  "85-89", "90-94", "95-99",  ">100")
 
-age_levels_combined = c("0-14", "0-14","0-14",
-                     "15-29", "15-29", "15-29", 
+age_levels_combined = c("0-14", "0-14","0-14", "15-29", "15-29", "15-29", 
                      "30-44", "30-44", "30-44", 
                      "45-64",  "45-64", "45-64", "45-64", 
                      ">65", ">65", ">65", ">65", ">65", ">65", ">65",  ">65")
+
+age_levels_by_10 = c("0-14", "0-14","0-14", "15-24", "15-24", "25-34", 
+                        "25-34", "45-54", "45-54", "55-64",  "55-64", "45-64", 
+                        "45-64", ">65", ">65", ">65", ">65", ">65", ">65", ">65",  ">65")
 
 files = dir(path, '^age5p_age_in_five_year_groups_and.*.xlsx')
 
 
 
-f=files[12]
 
-for( f in files) {
-#
+generate_all_graphs <- function( ) {
+  f=files[12]
 
-  read_excel(paste0( path, f), skip=8) %>%
-    clean_names() %>% 
-    rename( age=2, category=3 ) %>%
-    fill(age, .direction='down') %>%
-    filter( category != 'Total') %>%
-    filter( category != 'Not applicable') %>%
-    select(-1, -starts_with('dinka'), -starts_with('nuer')) %>%
-    { . } -> df
+  for( f in files) {
+  #
 
-#
-  category_label = df[1,2]
-  cat( paste( "\n# ", category_label))
-#
+    read_excel(paste0( path, f), skip=8) %>%
+      clean_names() %>% 
+      rename( age=2, category=3 ) %>%
+      fill(age, .direction='down') %>%
+      filter( category != 'Total') %>%
+      filter( category != 'Not applicable') %>%
+      select(-1, -starts_with('dinka'), -starts_with('nuer')) %>%
+      { . } -> df
 
-  df %>%
-    filter( !is.na( total )) %>%
-    mutate( age = fct_relevel( age, age_levels) ) %>%
-    filter(as.numeric(age) >=4 & as.numeric(age)<=13 ) %>%
-    select(-total ) %>%
-    gather( group, population, -age, -category ) %>% 
-    filter(population >0) %>%
-    mutate( age = fct_drop(age )) %>%
-    { . } -> df_long
+  #
+    category_label = df[1,2]
+    cat( paste( "\n# ", category_label))
+  #
+
+    df %>%
+      filter( !is.na( total )) %>%
+      mutate( age = fct_relevel( age, age_levels) ) %>%
+      filter(as.numeric(age) >=4 & as.numeric(age)<=13 ) %>%
+      select(-total ) %>%
+      gather( group, population, -age, -category ) %>% 
+      filter(population >0) %>%
+      mutate( age = fct_drop(age )) %>%
+      { . } -> df_long
 
 
-#
-  # get the total for each category, put them
-  # on the end of the detail records
-  df_long %>%
-    group_by ( category, group ) %>%
-    summarise( population = sum( population ) ) %>%
-    mutate( age ='total') %>%
-    bind_rows( df_long ) %>% 
-    { . } -> df_long_total
-#
-#
+  #
+    # get the total for each category, put them
+    # on the end of the detail records
+    df_long %>%
+      group_by ( category, group ) %>%
+      summarise( population = sum( population ) ) %>%
+      mutate( age ='total') %>%
+      bind_rows( df_long ) %>% 
+      { . } -> df_long_total
+  #
+  #
 
-  df_long%>%
-    ggplot( aes( group, population, fill=category) ) +
-    geom_bar(position='fill', stat='identity') +
-    facet_wrap( ~age ) +
-    ggtitle( paste('By Group, ', category_label )) +
-    ylab( 'Proportion of population' ) %>% 
-    { . } -> graph
+    df_long%>%
+      ggplot( aes( group, population, fill=category) ) +
+      geom_bar(position='fill', stat='identity') +
+      facet_wrap( ~age ) +
+      ggtitle( paste('By Group, ', category_label )) +
+      ylab( 'Proportion of population' ) %>% 
+      { . } -> graph
 
-  cat( paste( "\n## Graph by Ethnic Group  \n"))
-  print(graph )
-  cat('\n')
+    cat( paste( "\n## Graph by Ethnic Group  \n"))
+    print(graph )
+    cat('\n')
 
-  df_long%>%
-    mutate( age=dplyr::recode(age, !!! setNames( age_levels_short, age_levels))) %>%
-    ggplot( aes( age, population, fill=category) ) +
-    geom_bar(stat='identity') +
-    facet_wrap( ~group, scales='free' ) +
-    ggtitle( paste('By Age, ', category_label )) +
-    ylab( 'Number of people' ) %>% 
-    { . } -> graph
+    df_long%>%
+      mutate( age=dplyr::recode(age, !!! setNames( age_levels_short, age_levels))) %>%
+      ggplot( aes( age, population, fill=category) ) +
+      geom_bar(stat='identity') +
+      facet_wrap( ~group, scales='free' ) +
+      ggtitle( paste('By Age, ', category_label )) +
+      ylab( 'Number of people' ) %>% 
+      { . } -> graph
 
-  cat( paste( "\n## Graph by Age Group \n"))
-  print(graph )
-  cat('\n')
+    cat( paste( "\n## Graph by Age Group \n"))
+    print(graph )
+    cat('\n')
 
-  df_long %>%
-    distinct( age )  %>%
-    mutate( agen=as.numeric(age) )  
+    df_long %>%
+      distinct( age )  %>%
+      mutate( agen=as.numeric(age) )  
 
-  cat("\n## Table: % of total population for this ethnic group\n")
+    cat("\n## Table: % of total population for this ethnic group\n")
 
-  df_long %>%
-    group_by( category, group )  %>%
-    summarise( population = sum(population)) %>%
-    group_by( group ) %>%
-    mutate( proportion = round( population / sum( population ) * 100, 2 )) %>% 
-    select(-population ) %>%
-    spread( group, proportion ) %>%
-    kable() %>% 
-    kable_styling() %>%
-    print()
-  cat('\n')
+    df_long %>%
+      group_by( category, group )  %>%
+      summarise( population = sum(population)) %>%
+      group_by( group ) %>%
+      mutate( proportion = round( population / sum( population ) * 100, 2 )) %>% 
+      select(-population ) %>%
+      spread( group, proportion ) %>%
+      kable() %>% 
+      kable_styling() %>%
+      print()
+    cat('\n')
 
-  cat("\n## Table: % of total for this ethnic and age group\n")
+    cat("\n## Table: % of total for this ethnic and age group\n")
 
-  df_long %>%
-    mutate( age=dplyr::recode(age, !!! setNames( age_levels_combined, age_levels))) %>%
-    group_by( age, category, group )  %>%
-    summarise( population = sum(population)) %>%
-    group_by( group, age ) %>%
-    mutate( proportion = round( population / sum( population ) * 100, 2 )) %>% 
-    select(-population ) %>%
-    ungroup() %>%
-    mutate( group_age = paste0(group, '/',age ) ) %>%
-    select( -group, -age ) %>%
-#    mutate( proportion = color_bar("lightgreen")(proportion)) %>%
-    spread( group_age, proportion ) %>%
-    kable(escape = F, col.names = c('', "15-29", "30-44", "45-64","15-29", "30-44", "45-64") )  %>%
-    add_header_above(c(" ", "South Sudanese" = 3, "Vietnamese" = 3)) %>% 
-    kable_styling() %>%
-    print()
-  cat('\n')
+    df_long %>%
+      mutate( age=dplyr::recode(age, !!! setNames( age_levels_combined, age_levels))) %>%
+      group_by( age, category, group )  %>%
+      summarise( population = sum(population)) %>%
+      group_by( group, age ) %>%
+      mutate( proportion = round( population / sum( population ) * 100, 2 )) %>% 
+      select(-population ) %>%
+      ungroup() %>%
+      mutate( group_age = paste0(group, '/',age ) ) %>%
+      select( -group, -age ) %>%
+  #    mutate( proportion = color_bar("lightgreen")(proportion)) %>%
+      spread( group_age, proportion ) %>%
+      kable(escape = F, col.names = c('', "15-29", "30-44", "45-64","15-29", "30-44", "45-64") )  %>%
+      add_header_above(c(" ", "South Sudanese" = 3, "Vietnamese" = 3)) %>% 
+      kable_styling() %>%
+      print()
+    cat('\n')
 
+
+  }
 
 }
+```
+
+
+# AGE
+
+```{r}
+
+# directed
+
+get_df(13) %>% 
+  pluck( 2) %>%
+  mutate( age=dplyr::recode(age, !!! setNames( age_levels_by_10, age_levels))) %>%
+  group_by( age, group )  %>%
+  summarise( population = sum(population)) %>%
+  group_by( group ) %>%
+  mutate( proportion = round( population / sum( population ) * 100, 2 )) %>% 
+  select(-population ) %>%
+  spread( group, proportion ) %>%
+  kable()
+
+get_df(13) %>% 
+  pluck( 2) %>%
+  group_by( age, group, category)  %>%
+  summarise( population = sum(population)) %>%
+  ungroup() %>%
+  ggplot( aes( age, population, fill=category) ) +
+  geom_col() +
+  ggtitle( paste('By Group, ', 'Age and Sex' ))  +
+  facet_wrap( ~group, scales='free' ) 
+
+
+get_df(13) %>% 
+  pluck( 2) %>%
+  group_by( age, group, category)  %>%
+  summarise( population = sum(population)) %>%
+  ungroup()  %>%
+  spread( category, population ) %>%
+  arrange( group, age ) %>%
+  select( group, everything())
 
 
 ```
+
+
+
+# YOA
+
+```{r}
+
+# directed
+
+get_df(15) %>% 
+  pluck( 2) %>%
+  group_by( category, group )  %>%
+  summarise( population = sum(population)) %>%
+  group_by( group ) %>%
+  mutate( proportion = round( population / sum( population ) * 100, 2 )) %>% 
+  select(-population ) %>%
+  spread( group, proportion ) %>%
+  mutate( category = factor( category )) %>%
+  mutate( category = fct_shift( category ,n=1 ) ) %>%
+  arrange( category) %>%
+  kable()
+
+
+
+```
+
+# Parents COB
+
+```{r}
+
+
+get_df(1) %>% 
+  pluck( 2) %>%
+  group_by( category, group )  %>%
+  summarise( population = sum(population)) %>%
+  group_by( group ) %>%
+  mutate( proportion = round( population / sum( population ) * 100, 2 )) %>% 
+  select(-population ) %>%
+  spread( group, proportion ) %>%
+  kable()
+
+```
+
+
+
+# Child Care
+
+```{r results='asis'}
+
+orig = c("Did not provide child care", "Cared for own child/children", "Cared for other child/children", "Cared for own child/children and other child/children")
+
+recode = c("Did not do child care", "Cared for own children", "Cared for other children", "Cared for own children")
+
+labels = c('', 'Sudan', 'Viet', 'Sudan', 'Viet', 'Sudan', 'Viet', 'Sudan', 'Viet')
+
+
+cat('\n')
+
+
+get_df(2) %>% 
+  pluck( 2) %>%
+  mutate( age=dplyr::recode(age, !!! setNames( age_levels_by_10, age_levels))) %>%
+  mutate( category=dplyr::recode(category, !!! setNames( recode, orig))) %>%
+  group_by( age, group, category )  %>%
+  summarise( population = sum(population)) %>%
+  group_by( group ) %>%
+  mutate( proportion = round( population / sum( population ) * 100, 2 )) %>% 
+  ungroup() %>%
+  select(-population ) %>%
+  mutate( group_category = paste0(category, '/',group ) ) %>%
+  select( -group, -category ) %>%
+  #    mutate( proportion = color_bar("lightgreen")(proportion)) %>%
+  spread( group_category, proportion ) %>%
+  kable(escape = F, col.names = labels[1:7]  )  %>%
+  add_header_above(c(" ", "Cared for Other Children" = 2, "Cared for Own Children" = 2, 'Did not do childcare' = 2)) %>% 
+  kable_styling() %>%
+  print()
+
+cat('\n')
+
+get_df(2) %>% 
+  pluck( 2) %>%
+  mutate( age=dplyr::recode(age, !!! setNames( age_levels_by_10, age_levels))) %>%
+  mutate( category=dplyr::recode(category, !!! setNames( recode, orig))) %>%
+  group_by( age, group, category )  %>%
+  summarise( population = sum(population)) %>%
+  ungroup() %>%
+  ggplot( aes( age, population, fill=category) ) +
+  geom_col() +
+  ggtitle( paste('By Group, ', 'Childcare' ))  +
+  facet_wrap( ~group, scales='free' ) 
+
+cat('\n')
+
+get_df(2) %>% 
+  pluck( 2) %>%
+  mutate( age=dplyr::recode(age, !!! setNames( age_levels_by_10, age_levels))) %>%
+  mutate( category=dplyr::recode(category, !!! setNames( recode, orig))) %>%
+  group_by( age, group, category)  %>%
+  summarise( population = sum(population)) %>%
+  ungroup()  %>%
+  spread( category, population ) %>%
+  arrange( group, age ) %>%
+  select( group, everything()) %>% 
+  kable()
+
+cat('\n')
+
+```
+
+
+
+# HEAP
+
+```{r results='asis'}
+
+orig = c("Advanced Diploma and Diploma Level", "Certificate III & IV Level", "Secondary Education - Years 10 and above", "Secondary Education - Years 9 and below", "Supplementary Codes", "Graduate Diploma and Graduate Certificate Level", "Bachelor Degree Level", "Postgraduate Degree Level", "Certificate I & II Level")
+
+recode = c("TAFE", "TAFE", "High School", "High School", "TAFE", "TAFE", "University", "University", "TAFE")
+
+cat('\n')
+
+get_df(6) %>% 
+  pluck( 2) %>%
+  mutate( age=dplyr::recode(age, !!! setNames( age_levels_by_10, age_levels))) %>%
+  mutate( category=dplyr::recode(category, !!! setNames( recode, orig))) %>%
+  group_by( age, group, category )  %>%
+  summarise( population = sum(population)) %>%
+  group_by( group ) %>%
+  mutate( proportion = round( population / sum( population ) * 100, 2 )) %>% 
+  ungroup() %>%
+  select(-population ) %>%
+  mutate( group_category = paste0(category, '/',group ) ) %>%
+  select( -group, -category ) %>%
+  spread( group_category, proportion ) %>%
+  kable(escape = F, col.names = labels[1:7]  )  %>%
+  add_header_above(c(" ", "High School" = 2, "TAFE" = 2, 'University' = 2)) %>% 
+  kable_styling() %>%
+  print()
+
+cat('\n')
+
+get_df(6) %>% 
+  pluck( 2) %>%
+  mutate( age=dplyr::recode(age, !!! setNames( age_levels_by_10, age_levels))) %>%
+  mutate( category=dplyr::recode(category, !!! setNames( recode, orig))) %>%
+  group_by( age, group, category )  %>%
+  summarise( population = sum(population)) %>%
+  ungroup() %>%
+  ggplot( aes( age, population, fill=category) ) +
+  geom_col() +
+  ggtitle( paste('By Group, ', 'HEAP' ))  +
+  facet_wrap( ~group, scales='free' ) 
+
+get_df(6) %>% 
+  pluck( 2) %>%
+  mutate( age=dplyr::recode(age, !!! setNames( age_levels_by_10, age_levels))) %>%
+  mutate( category=dplyr::recode(category, !!! setNames( recode, orig))) %>%
+  group_by( age, group, category)  %>%
+  summarise( population = sum(population)) %>%
+  ungroup()  %>%
+  spread( category, population ) %>%
+  arrange( group, age ) %>%
+  select( group, everything()) %>% 
+  kable()
+
+
+```
+
+
+
+# STUP
+
+```{r results='asis'}
+
+
+orig = c("Not attending", "Full-time student", "Part-time student", "Institution (TYPP) stated, full-time/part-time status (STUP) not stated", "Both not stated - both institution (TYPP) and full-time/part-time status (STUP) not stated") 
+
+
+recode = c("Not in school", "In school", "In school", "In school", "Not in school")
+
+get_df(14) %>% 
+  pluck( 2) %>%
+  mutate( age=dplyr::recode(age, !!! setNames( age_levels_by_10, age_levels))) %>%
+  mutate( category=dplyr::recode(category, !!! setNames( recode, orig))) %>%
+  group_by( age, group, category )  %>%
+  summarise( population = sum(population)) %>%
+  group_by( group ) %>%
+  mutate( proportion = round( population / sum( population ) * 100, 2 )) %>% 
+  ungroup() %>%
+  select(-population ) %>%
+  mutate( group_category = paste0(category, '/',group ) ) %>%
+  select( -group, -category ) %>%
+  spread( group_category, proportion ) %>%
+  kable(escape = F, col.names = labels[1:5]  )  %>%
+  add_header_above(c(" ", "In School" = 2, "Not in school" = 2)) %>% 
+  kable_styling() %>%
+  print()
+
+cat('\n')
+
+get_df(14) %>% 
+  pluck( 2) %>%
+  mutate( age=dplyr::recode(age, !!! setNames( age_levels_by_10, age_levels))) %>%
+  mutate( category=dplyr::recode(category, !!! setNames( recode, orig))) %>%
+  group_by( age, group, category )  %>%
+  summarise( population = sum(population)) %>%
+  ungroup() %>%
+  ggplot( aes( age, population, fill=category) ) +
+  geom_col() +
+  ggtitle( paste('By Group, ', 'STUP' ))  +
+  facet_wrap( ~group, scales='free' ) 
+
+get_df(14) %>% 
+  pluck( 2) %>%
+  mutate( age=dplyr::recode(age, !!! setNames( age_levels_by_10, age_levels))) %>%
+  mutate( category=dplyr::recode(category, !!! setNames( recode, orig))) %>%
+  group_by( age, group, category)  %>%
+  summarise( population = sum(population)) %>%
+  ungroup()  %>%
+  spread( category, population ) %>%
+  arrange( group, age ) %>%
+  select( group, everything()) %>% 
+  kable()
+
+
+```
+
+#  INCOME
+
+```{r results='asis'}
+
+
+orig = c("Negative income", "Nil income", "$1-$149 ($1-$7,799)", "$150-$299 ($7,800-$15,599)", "$300-$399 ($15,600-$20,799)", "$400-$499 ($20,800-$25,999)", "$500-$649 ($26,000-$33,799)", "$650-$799 ($33,800-$41,599)", "$1,000-$1,249 ($52,000-$64,999)", "$800-$999 ($41,600-$51,999)", "$1,250-$1,499 ($65,000-$77,999)", "$1,500-$1,749 ($78,000-$90,999)", "$2,000-$2,999 ($104,000-$155,999)", "$3,000 or more ($156,000 or more)", "$1,750-$1,999 ($91,000-$103,999)")
+
+
+recode = c("<$800", "<$800","<$800","<$800","<$800","<$800","<$800","<$800" , "$800-$1499" , "$800-$1499" , "$800-$1499" , ">= $1500",  ">= $1500",  ">= $1500",  "$800-$1499" )
+
+get_df(9) %>% 
+  pluck( 2) %>%
+  mutate( age=dplyr::recode(age, !!! setNames( age_levels_by_10, age_levels))) %>%
+  mutate( category=dplyr::recode(category, !!! setNames( recode, orig))) %>%
+  group_by( age, group, category )  %>%
+  summarise( population = sum(population)) %>%
+  group_by( group ) %>%
+  mutate( proportion = round( population / sum( population ) * 100, 2 )) %>% 
+  ungroup() %>%
+  select(-population ) %>%
+  mutate( group_category = paste0(category, '/',group ) ) %>%
+  select( -group, -category ) %>%
+  spread( group_category, proportion ) %>%
+  kable(escape = F, col.names = labels[1:7]  )  %>%
+  add_header_above(c(" ", "<$800"=2, "$800-$1499"=2, ">= $1500"=2 )) %>% 
+  kable_styling() %>%
+  print()
+
+cat('\n')
+
+get_df(9) %>% 
+  pluck( 2) %>%
+  mutate( age=dplyr::recode(age, !!! setNames( age_levels_by_10, age_levels))) %>%
+  mutate( category=dplyr::recode(category, !!! setNames( recode, orig))) %>%
+  group_by( age, group, category )  %>%
+  summarise( population = sum(population)) %>%
+  ungroup() %>%
+  ggplot( aes( age, population, fill=category) ) +
+  geom_col() +
+  ggtitle( paste('By Group, ', 'INCOME' ))  +
+  facet_wrap( ~group, scales='free' ) 
+
+get_df(9) %>% 
+  pluck( 2) %>%
+  mutate( age=dplyr::recode(age, !!! setNames( age_levels_by_10, age_levels))) %>%
+  mutate( category=dplyr::recode(category, !!! setNames( recode, orig))) %>%
+  group_by( age, group, category)  %>%
+  summarise( population = sum(population)) %>%
+  ungroup()  %>%
+  spread( category, population ) %>%
+  arrange( group, age ) %>%
+  select( group, everything()) %>% 
+  kable()
+
+
+```
+
+
+
+
+#  Deciles
+
+```{r}
+
+orig = paste0( "Decile ", 1:10 )
+                      
+
+recode = c("Decile 1-3", "Decile 1-3", "Decile 1-3", "Decile 4-6", "Decile 4-6", "Decile 4-6", "Decile 7-10", "Decile 7-10", "Decile 7-10", "Decile 7-10")
+
+get_df(11) %>% 
+  pluck( 2) %>%
+  mutate( age=dplyr::recode(age, !!! setNames( age_levels_by_10, age_levels))) %>%
+  mutate( category=dplyr::recode(category, !!! setNames( recode, orig))) %>%
+  group_by( age, group, category )  %>%
+  summarise( population = sum(population)) %>%
+  group_by( group ) %>%
+  mutate( proportion = round( population / sum( population ) * 100, 2 )) %>% 
+  ungroup() %>%
+  select(-population ) %>%
+  mutate( group_category = paste0(category, '/',group ) ) %>%
+  select( -group, -category ) %>%
+  spread( group_category, proportion ) %>%
+  kable(escape = F, col.names = labels[1:7]  )  %>%
+  add_header_above(c(" ", "Decile 1-3"=2, "Decile 5-6"=2, "Decile 7-10"=2 )) %>% 
+  kable_styling() %>%
+  print()
+
+cat('\n')
+
+get_df(11) %>% 
+  pluck( 2) %>%
+  mutate( age=dplyr::recode(age, !!! setNames( age_levels_by_10, age_levels))) %>%
+  mutate( category=dplyr::recode(category, !!! setNames( recode, orig))) %>%
+  group_by( age, group, category )  %>%
+  summarise( population = sum(population)) %>%
+  ungroup() %>%
+  ggplot( aes( age, population, fill=category) ) +
+  geom_col() +
+  ggtitle( paste('By Group, ', 'Decile' ))  +
+  facet_wrap( ~group, scales='free' )  
+
+get_df(11) %>% 
+  pluck( 2) %>%
+  mutate( age=dplyr::recode(age, !!! setNames( age_levels_by_10, age_levels))) %>%
+  mutate( category=dplyr::recode(category, !!! setNames( recode, orig))) %>%
+  group_by( age, group, category)  %>%
+  summarise( population = sum(population)) %>%
+  ungroup()  %>%
+  spread( category, population ) %>%
+  arrange( group, age ) %>%
+  select( group, everything()) %>%
+  kable()
+
+
+```
+
 
