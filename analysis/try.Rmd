@@ -1,0 +1,41 @@
+---
+title: "Home"
+site: workflowr::wflow_site
+output:
+  workflowr::wflow_html:
+    toc: false
+editor_options:
+  chunk_output_type: console
+---
+```{r library}
+
+library(tidyverse)
+library(knitr)
+library(kableExtra)
+library(formattable)
+
+kable(dt) %>%
+  kable_styling("striped") %>%
+  add_header_above(c(" " = 1, "Group 1" = 2, "Group 2" = 2, "Group 3" = 2))mtcars[1:5, 1:4] %>%
+  mutate(
+         car = row.names(.),
+         mpg = color_tile("white", "orange")(mpg),
+         cyl = cell_spec(cyl, angle = (1:5)*60, 
+                         background = "red", color = "white", align = "center"),
+         disp = ifelse(disp > 200,
+                       cell_spec(disp, color = "red", bold = T),
+                       cell_spec(disp, color = "green", italic = T)),
+         hp = color_bar("lightgreen")(hp)
+         ) %>%
+select(car, everything()) %>%
+kable(escape = F) %>%
+kable_styling("hover", full_width = F) %>%
+column_spec(5, width = "3cm") %>%
+add_header_above(c(" ", "Hello" = 2, "World" = 2))
+
+
+kable(dt) %>%
+  kable_styling("striped") %>%
+  add_header_above(c(" " = 1, "Group 1" = 2, "Group 2" = 2, "Group 3" = 2))
+
+```

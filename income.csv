@@ -1,0 +1,11 @@
+group,age,<$800,>= $1500,$800-$1499
+south_sudanese,15-24,1778,9,68
+south_sudanese,25-34,1113,50,362
+south_sudanese,45-54,845,47,369
+south_sudanese,55-64,497,17,184
+south_sudanese,45-64,155,NA,26
+vietnamese,15-24,47341,323,4520
+vietnamese,25-34,26188,5655,17272
+vietnamese,45-54,23278,6146,12847
+vietnamese,55-64,24097,3095,10230
+vietnamese,45-64,23494,1394,5862
