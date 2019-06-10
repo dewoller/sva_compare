@@ -109,9 +109,8 @@ age_levels_combined = c("0-14", "0-14","0-14", "15-29", "15-29", "15-29",
                      "45-64",  "45-64", "45-64", "45-64", 
                      ">65", ">65", ">65", ">65", ">65", ">65", ">65",  ">65")
 
-age_levels_by_10 = c("0-14", "0-14","0-14", "15-24", "15-24", "25-34", 
-                        "25-34", "45-54", "45-54", "55-64",  "55-64", "45-64", 
-                        "45-64", ">65", ">65", ">65", ">65", ">65", ">65", ">65",  ">65")
+age_levels_by_10 = c("0-14", "0-14","0-14", 
+                     "15-24", "15-24", "25-34", "25-34", "35-44","35-44",  "45-54", "45-54", "55-64",  "55-64", ">65", ">65", ">65", ">65", ">65", ">65", ">65",  ">65")
 
 files = dir(path, '^age5p_age_in_five_year_groups_and.*.xlsx')
 
@@ -233,20 +232,27 @@ generate_all_graphs <- function( ) {
 
 # AGE
 
-```{r}
+```{r age}
 
 # directed
 
 get_df(13) %>% 
   pluck( 2) %>%
   mutate( age=dplyr::recode(age, !!! setNames( age_levels_by_10, age_levels))) %>%
-  group_by( age, group )  %>%
+  group_by( category, age, group )  %>%
   summarise( population = sum(population)) %>%
   group_by( group ) %>%
   mutate( proportion = round( population / sum( population ) * 100, 2 )) %>% 
   select(-population ) %>%
-  spread( group, proportion ) %>%
-  kable()
+  ungroup() %>%
+  mutate( group_category = paste0(group, '/',category ) ) %>%
+  select( -group, -category ) %>%
+  #    mutate( proportion = color_bar("lightgreen")(proportion)) %>%
+  spread( group_category, proportion ) %>%
+  kable(escape = F, col.names = c('', "Female", "Male", "Female","Male") )  %>%
+  add_header_above(c(" ", "South Sudanese" = 2, "Vietnamese" = 2)) %>% 
+  kable_styling() %>%
+  print()
 
 get_df(13) %>% 
   pluck( 2) %>%
@@ -276,7 +282,7 @@ get_df(13) %>%
 
 # YOA
 
-```{r}
+```{r yoa}
 
 # directed
 
@@ -299,7 +305,7 @@ get_df(15) %>%
 
 # Parents COB
 
-```{r}
+```{r COB}
 
 
 get_df(1) %>% 
