@@ -435,7 +435,7 @@ div.section {
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2019-06-07
+<strong>Last updated:</strong> 2019-06-10
 </p>
 <p>
 <strong>Checks:</strong> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 6 <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> 0
@@ -514,10 +514,10 @@ This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomdewollersvacomparetree4cb5c4e94c5525fa6d8aa0262abffa4b1e489767targetblank4cb5c4ea"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/dewoller/sva_compare/tree/4cb5c4e94c5525fa6d8aa0262abffa4b1e489767" target="_blank">4cb5c4e</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomdewollersvacomparetree0c08b7f21861a6878d350692481de75fb68c2ac7targetblank0c08b7fa"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/dewoller/sva_compare/tree/0c08b7f21861a6878d350692481de75fb68c2ac7" target="_blank">0c08b7f</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomdewollersvacomparetree4cb5c4e94c5525fa6d8aa0262abffa4b1e489767targetblank4cb5c4ea" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomdewollersvacomparetree0c08b7f21861a6878d350692481de75fb68c2ac7targetblank0c08b7fa" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
@@ -526,16 +526,8 @@ Great! You are using Git for version control. Tracking code development and conn
 Ignored files:
     Ignored:    analysis/figure/
 
-Untracked files:
-    Untracked:  adsf.doc
-    Untracked:  age.csv
-    Untracked:  analysis/try.Rmd
-    Untracked:  attending_school.csv
-    Untracked:  childcare.csv
-    Untracked:  decile.csv
-    Untracked:  income.csv
-    Untracked:  university.csv
-    Untracked:  ~$adsf.doc
+Unstaged changes:
+    Deleted:    ~$adsf.doc
 
 </code></pre>
 <p>
@@ -574,6 +566,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/dewoller/sva_compare/blob/0c08b7f21861a6878d350692481de75fb68c2ac7/analysis/index.Rmd" target="_blank">0c08b7f</a>
+</td>
+<td>
+Dennis Wollersheim
+</td>
+<td>
+2019-06-10
+</td>
+<td>
+wflow_publish(“analysis/index.Rmd”)
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/dewoller/sva_compare/36213fc594f30ee6c2b2472ea55f96f43911b63b/docs/index.html" target="_blank">36213fc</a>
+</td>
+<td>
+Dennis Wollersheim
+</td>
+<td>
+2019-06-07
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -834,116 +860,60 @@ max-width: none;
 </style>
 <div id="age" class="section level1">
 <h1>AGE</h1>
-<table>
-<thead>
-<tr>
-<th style="text-align:left;">
-age
-</th>
-<th style="text-align:right;">
-south_sudanese
-</th>
-<th style="text-align:right;">
-vietnamese
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left;">
-15-24
-</td>
-<td style="text-align:right;">
-34.15
-</td>
-<td style="text-align:right;">
-24.71
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-25-34
-</td>
-<td style="text-align:right;">
-27.11
-</td>
-<td style="text-align:right;">
-23.14
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-45-54
-</td>
-<td style="text-align:right;">
-22.79
-</td>
-<td style="text-align:right;">
-19.96
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-55-64
-</td>
-<td style="text-align:right;">
-12.56
-</td>
-<td style="text-align:right;">
-17.68
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-45-64
-</td>
-<td style="text-align:right;">
-3.39
-</td>
-<td style="text-align:right;">
-14.51
-</td>
-</tr>
-</tbody>
-</table>
-<p><img src="figure/index.Rmd/unnamed-chunk-2-1.png" width="1056" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-2-1">
-Past versions of unnamed-chunk-2-1.png
-</button>
-</p>
-<div id="fig-unnamed-chunk-2-1" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/dewoller/sva_compare/blob/c175a087e901e300d4d5a93612e89e7e6969fea6/docs/figure/index.Rmd/unnamed-chunk-2-1.png" target="_blank">c175a08</a>
-</td>
-<td>
-Dennis Wollersheim
-</td>
-<td>
-2019-06-07
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
+<pre><code>&lt;table class=&quot;table&quot; style=&quot;margin-left: auto; margin-right: auto;&quot;&gt;
+ &lt;thead&gt;
+&lt;tr&gt;
+&lt;th style=&quot;border-bottom:hidden&quot; colspan=&quot;1&quot;&gt;&lt;/th&gt;
+&lt;th style=&quot;border-bottom:hidden; padding-bottom:0; padding-left:3px;padding-right:3px;text-align: center; &quot; colspan=&quot;2&quot;&gt;&lt;div style=&quot;border-bottom: 1px solid #ddd; padding-bottom: 5px; &quot;&gt;South Sudanese&lt;/div&gt;&lt;/th&gt;
+&lt;th style=&quot;border-bottom:hidden; padding-bottom:0; padding-left:3px;padding-right:3px;text-align: center; &quot; colspan=&quot;2&quot;&gt;&lt;div style=&quot;border-bottom: 1px solid #ddd; padding-bottom: 5px; &quot;&gt;Vietnamese&lt;/div&gt;&lt;/th&gt;
+&lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;th style=&quot;text-align:left;&quot;&gt;  &lt;/th&gt;
+   &lt;th style=&quot;text-align:right;&quot;&gt; Female &lt;/th&gt;
+   &lt;th style=&quot;text-align:right;&quot;&gt; Male &lt;/th&gt;
+   &lt;th style=&quot;text-align:right;&quot;&gt; Female &lt;/th&gt;
+   &lt;th style=&quot;text-align:right;&quot;&gt; Male &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style=&quot;text-align:left;&quot;&gt; 15-24 &lt;/td&gt;
+   &lt;td style=&quot;text-align:right;&quot;&gt; 16.32 &lt;/td&gt;
+   &lt;td style=&quot;text-align:right;&quot;&gt; 17.83 &lt;/td&gt;
+   &lt;td style=&quot;text-align:right;&quot;&gt; 12.68 &lt;/td&gt;
+   &lt;td style=&quot;text-align:right;&quot;&gt; 12.02 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style=&quot;text-align:left;&quot;&gt; 25-34 &lt;/td&gt;
+   &lt;td style=&quot;text-align:right;&quot;&gt; 13.91 &lt;/td&gt;
+   &lt;td style=&quot;text-align:right;&quot;&gt; 13.20 &lt;/td&gt;
+   &lt;td style=&quot;text-align:right;&quot;&gt; 13.15 &lt;/td&gt;
+   &lt;td style=&quot;text-align:right;&quot;&gt; 9.98 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style=&quot;text-align:left;&quot;&gt; 35-44 &lt;/td&gt;
+   &lt;td style=&quot;text-align:right;&quot;&gt; 10.37 &lt;/td&gt;
+   &lt;td style=&quot;text-align:right;&quot;&gt; 12.42 &lt;/td&gt;
+   &lt;td style=&quot;text-align:right;&quot;&gt; 11.73 &lt;/td&gt;
+   &lt;td style=&quot;text-align:right;&quot;&gt; 8.23 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style=&quot;text-align:left;&quot;&gt; 45-54 &lt;/td&gt;
+   &lt;td style=&quot;text-align:right;&quot;&gt; 5.88 &lt;/td&gt;
+   &lt;td style=&quot;text-align:right;&quot;&gt; 6.68 &lt;/td&gt;
+   &lt;td style=&quot;text-align:right;&quot;&gt; 9.42 &lt;/td&gt;
+   &lt;td style=&quot;text-align:right;&quot;&gt; 8.26 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style=&quot;text-align:left;&quot;&gt; 55-64 &lt;/td&gt;
+   &lt;td style=&quot;text-align:right;&quot;&gt; 1.56 &lt;/td&gt;
+   &lt;td style=&quot;text-align:right;&quot;&gt; 1.83 &lt;/td&gt;
+   &lt;td style=&quot;text-align:right;&quot;&gt; 7.56 &lt;/td&gt;
+   &lt;td style=&quot;text-align:right;&quot;&gt; 6.95 &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;</code></pre>
+<p><img src="figure/index.Rmd/age-1.png" width="1056" style="display: block; margin: auto;" /></p>
 </div>
 <div id="yoa" class="section level1">
 <h1>YOA</h1>
@@ -1212,7 +1182,7 @@ Viet
 </tr>
 <tr>
 <td style="text-align:left;">
-45-54
+35-44
 </td>
 <td style="text-align:right;">
 0.78
@@ -1235,7 +1205,7 @@ Viet
 </tr>
 <tr>
 <td style="text-align:left;">
-55-64
+45-54
 </td>
 <td style="text-align:right;">
 1.40
@@ -1258,7 +1228,7 @@ Viet
 </tr>
 <tr>
 <td style="text-align:left;">
-45-64
+55-64
 </td>
 <td style="text-align:right;">
 0.67
@@ -1281,13 +1251,13 @@ Viet
 </tr>
 </tbody>
 </table>
-<p><img src="figure/index.Rmd/unnamed-chunk-5-1.png" width="1056" style="display: block; margin: auto;" /></p>
+<p><img src="figure/index.Rmd/unnamed-chunk-2-1.png" width="1056" style="display: block; margin: auto;" /></p>
 <p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-5-1">
-Past versions of unnamed-chunk-5-1.png
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-2-1">
+Past versions of unnamed-chunk-2-1.png
 </button>
 </p>
-<div id="fig-unnamed-chunk-5-1" class="collapse">
+<div id="fig-unnamed-chunk-2-1" class="collapse">
 <div class="table-responsive">
 <table class="table table-condensed table-hover">
 <thead>
@@ -1306,7 +1276,7 @@ Date
 <tbody>
 <tr>
 <td>
-<a href="https://github.com/dewoller/sva_compare/blob/c175a087e901e300d4d5a93612e89e7e6969fea6/docs/figure/index.Rmd/unnamed-chunk-5-1.png" target="_blank">c175a08</a>
+<a href="https://github.com/dewoller/sva_compare/blob/c175a087e901e300d4d5a93612e89e7e6969fea6/docs/figure/index.Rmd/unnamed-chunk-2-1.png" target="_blank">c175a08</a>
 </td>
 <td>
 Dennis Wollersheim
@@ -1415,7 +1385,7 @@ Viet
 </tr>
 <tr>
 <td style="text-align:left;">
-45-54
+35-44
 </td>
 <td style="text-align:right;">
 6.59
@@ -1438,7 +1408,7 @@ Viet
 </tr>
 <tr>
 <td style="text-align:left;">
-55-64
+45-54
 </td>
 <td style="text-align:right;">
 2.90
@@ -1461,7 +1431,7 @@ Viet
 </tr>
 <tr>
 <td style="text-align:left;">
-45-64
+55-64
 </td>
 <td style="text-align:right;">
 0.91
@@ -1484,44 +1454,7 @@ Viet
 </tr>
 </tbody>
 </table>
-<p><img src="figure/index.Rmd/unnamed-chunk-6-1.png" width="1056" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-6-1">
-Past versions of unnamed-chunk-6-1.png
-</button>
-</p>
-<div id="fig-unnamed-chunk-6-1" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/dewoller/sva_compare/blob/c175a087e901e300d4d5a93612e89e7e6969fea6/docs/figure/index.Rmd/unnamed-chunk-6-1.png" target="_blank">c175a08</a>
-</td>
-<td>
-Dennis Wollersheim
-</td>
-<td>
-2019-06-07
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
+<p><img src="figure/index.Rmd/unnamed-chunk-3-1.png" width="1056" style="display: block; margin: auto;" /></p>
 </div>
 <div id="stup" class="section level1">
 <h1>STUP</h1>
@@ -1595,7 +1528,7 @@ Viet
 </tr>
 <tr>
 <td style="text-align:left;">
-45-54
+35-44
 </td>
 <td style="text-align:right;">
 8.85
@@ -1612,7 +1545,7 @@ Viet
 </tr>
 <tr>
 <td style="text-align:left;">
-55-64
+45-54
 </td>
 <td style="text-align:right;">
 3.73
@@ -1629,7 +1562,7 @@ Viet
 </tr>
 <tr>
 <td style="text-align:left;">
-45-64
+55-64
 </td>
 <td style="text-align:right;">
 0.83
@@ -1646,44 +1579,7 @@ Viet
 </tr>
 </tbody>
 </table>
-<p><img src="figure/index.Rmd/unnamed-chunk-7-1.png" width="1056" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-7-1">
-Past versions of unnamed-chunk-7-1.png
-</button>
-</p>
-<div id="fig-unnamed-chunk-7-1" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/dewoller/sva_compare/blob/c175a087e901e300d4d5a93612e89e7e6969fea6/docs/figure/index.Rmd/unnamed-chunk-7-1.png" target="_blank">c175a08</a>
-</td>
-<td>
-Dennis Wollersheim
-</td>
-<td>
-2019-06-07
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
+<p><img src="figure/index.Rmd/unnamed-chunk-4-1.png" width="1056" style="display: block; margin: auto;" /></p>
 </div>
 <div id="income" class="section level1">
 <h1>INCOME</h1>
@@ -1780,7 +1676,7 @@ Viet
 </tr>
 <tr>
 <td style="text-align:left;">
-45-54
+35-44
 </td>
 <td style="text-align:right;">
 15.31
@@ -1803,7 +1699,7 @@ Viet
 </tr>
 <tr>
 <td style="text-align:left;">
-55-64
+45-54
 </td>
 <td style="text-align:right;">
 9.00
@@ -1826,7 +1722,7 @@ Viet
 </tr>
 <tr>
 <td style="text-align:left;">
-45-64
+55-64
 </td>
 <td style="text-align:right;">
 2.81
@@ -1849,13 +1745,13 @@ NA
 </tr>
 </tbody>
 </table>
-<p><img src="figure/index.Rmd/unnamed-chunk-8-1.png" width="1056" style="display: block; margin: auto;" /></p>
+<p><img src="figure/index.Rmd/unnamed-chunk-5-1.png" width="1056" style="display: block; margin: auto;" /></p>
 <p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-8-1">
-Past versions of unnamed-chunk-8-1.png
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-5-1">
+Past versions of unnamed-chunk-5-1.png
 </button>
 </p>
-<div id="fig-unnamed-chunk-8-1" class="collapse">
+<div id="fig-unnamed-chunk-5-1" class="collapse">
 <div class="table-responsive">
 <table class="table table-condensed table-hover">
 <thead>
@@ -1874,7 +1770,7 @@ Date
 <tbody>
 <tr>
 <td>
-<a href="https://github.com/dewoller/sva_compare/blob/c175a087e901e300d4d5a93612e89e7e6969fea6/docs/figure/index.Rmd/unnamed-chunk-8-1.png" target="_blank">c175a08</a>
+<a href="https://github.com/dewoller/sva_compare/blob/c175a087e901e300d4d5a93612e89e7e6969fea6/docs/figure/index.Rmd/unnamed-chunk-5-1.png" target="_blank">c175a08</a>
 </td>
 <td>
 Dennis Wollersheim
